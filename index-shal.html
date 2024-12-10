@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(145deg, #0d1e40, #06132e);
+            color: #e3f6ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 800px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #0f2a5c, #092145);
+            box-shadow: 10px 10px 20px #061831, -10px -10px 20px #123e7c;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 15px 15px 30px #061831, -15px -15px 30px #174d9a;
+        }
+
+        .card h3 {
+            font-size: 1.4rem;
+            color: #a8d6ff;
+            margin-bottom: 10px;
+        }
+
+        .card .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4fd1ff;
+            margin: 15px 0;
+        }
+
+        .card .icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 3rem;
+            color: rgba(79, 209, 255, 0.2);
+        }
+
+        .card .status {
+            font-size: 1rem;
+            color: #bfe9ff;
+        }
+
+        .updated {
+            grid-column: span 2;
+            text-align: center;
+            font-size: 1rem;
+            color: #a8d6ff;
+            margin-top: 15px;
+        }
+
+        .neon {
+            background: #0b274d;
+            box-shadow: 0 0 15px rgba(79, 209, 255, 0.8), inset 0 0 10px rgba(79, 209, 255, 0.4);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: #e3f6ff;
+            margin-top: 15px;
+            display: inline-block;
+        }
+    </style>
+    <script>
+        async function fetchCryptoPrices() {
+            try {
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ripple&vs_currencies=usd');
+                const data = await response.json();
+
+                document.getElementById('btc-price').innerText = `$${data.bitcoin.usd.toFixed(2)}`;
+                document.getElementById('xrp-price').innerText = `$${data.ripple.usd.toFixed(2)}`;
+
+                const now = new Date();
+                document.getElementById('last-updated').innerText = `Last Updated: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+            } catch (error) {
+                console.error("Failed to fetch crypto prices:", error);
+            }
+        }
+
+        window.onload = () => {
+            fetchCryptoPrices();
+            setInterval(fetchCryptoPrices, 30000);
+        };
+    </script>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="card">
+            <div class="icon">₿</div>
+            <h3>Bitcoin (BTC)</h3>
+            <div class="price" id="btc-price">Loading...</div>
+            <div class="status">Stable</div>
+        </div>
+        <div class="card">
+            <div class="icon">✦</div>
+            <h3>Ripple (XRP)</h3>
+            <div class="price" id="xrp-price">Loading...</div>
+            <div class="status">Volatile</div>
+        </div>
+        <div class="updated" id="last-updated">Last Updated: Loading...</div>
+    </div>
+</body>
+</html>
